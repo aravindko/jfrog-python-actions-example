@@ -3,12 +3,12 @@
 from setuptools import setup
 
 setup(
-    name='jfrog-python-actions-example',
+    name='JFROG_py_POC',
     version='1.0',
     description='Project example for building Python project with JFrog products.',
     author='JFrog',
-    author_email='matthewam@jfrog.com',
-    url='https://github.com/mambroziak/jfrog-python-actions-example',
+    author_email='ar_poc',
+    url='https://github.com/',
     packages=['pythonExample'],
-    install_requires=['PyYAML>3.11', 'nltk'],
+    install_requires=['PyYAML>3.11', 'nltk','urllib3==1.26.18'],
 )
