@@ -1,5 +1,16 @@
 name: Sample Python GitHub
-on: push
+on:
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'
+        required: true
+        default: 'warning'
+        type: choice
+        options:
+          - info
+          - warning
+          - debug
 
 permissions:
   actions: read # for detecting the Github Actions environment.
@@ -26,10 +37,10 @@ jobs:
               env:
                 #JF_URL value is the JPD subdomain. It must exclude protocol (e.g. my-instance-name.jfrog.io)
                 JF_URL: https://${{ vars.JF_URL }}/
-                JF_ACCESS_TOKEN: ${{ secrets.JF_ACCESS_TOKEN }}
+                JF_PASSWORD: ${{ secrets.JF_PASSWORD }}
                 # Docker section start
                 #   JF_USER is used for basic authentication to docker repositories
-                JF_USER: ${{ vars.JF_USER }}
+                JF_USER: ${{ secrets.JF_USER }}
                 # Docker section end
 
               with:
@@ -66,8 +77,8 @@ jobs:
               uses: docker/login-action@v3
               with:
                 registry: ${{ vars.JF_URL }}
-                username: ${{ vars.JF_USER }}
-                password: ${{ secrets.JF_ACCESS_TOKEN }}
+                username: ${{ secrets.JF_USER }}
+                password: ${{ secrets.JF_PASSWORD }}
                 
             - name: Build Docker image    
               uses: docker/build-push-action@v6
@@ -84,8 +95,10 @@ jobs:
                  
             - name: publish build info
               run: |
-                jf rt bce 
-                jf rt bp
+                      jf rt build-collect-env 
+                      jf rt build-add-dependencies .
+                      jf rt build-add-git
+                      jf rt build-publish
                 
             - name: build scan
               run: |            
@@ -99,5 +112,5 @@ jobs:
         digest: ${{ needs.build-publish-python.outputs.digest }}
         private-repository: true
       secrets:
-        registry-username: ${{ vars.JF_USER }}
-        registry-password: ${{ secrets.JF_ACCESS_TOKEN }}
+        registry-username: ${{ secrets.JF_USER }}
+        registry-password: ${{ secrets.JF_PASSWORD }}
