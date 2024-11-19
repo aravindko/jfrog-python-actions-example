@@ -92,7 +92,7 @@ jobs:
               run: |  
                  echo "${{ vars.JF_URL }}/${{ env.DOCKER_REPO }}/${{ env.IMAGE_NAME }}@${{ steps.build.outputs.digest }}" > metadata.json
                  jf rt build-docker-create ${{ env.DOCKER_REPO }} --image-file metadata.json 
-                 jf docker scan 
+                 jf docker scan ${{ vars.JF_URL }}/${{ env.DOCKER_REPO }}/${{ env.IMAGE_NAME }}  
                  
             - name: publish build info
               run: |
